@@ -2,8 +2,6 @@
 
 A Python CLI tool that checks if your email or password has been exposed in known data breaches.
 
-Built on the [HaveIBeenPwned](https://haveibeenpwned.com) API — the same service used by Firefox, 1Password, and governments worldwide.
-
 ---
 
 ## Features
@@ -34,10 +32,7 @@ cd breach-radar
 pip install -r requirements.txt
 ```
 
-Get a free API key at [haveibeenpwned.com/API](https://haveibeenpwned.com/API/Key) and create a `.env` file:
-
-
-HIBP_API_KEY=your_key_here
+No API key needed - uses the free XposedOrNot API.
 
 ---
 
@@ -56,10 +51,12 @@ python main.py --email yourname@example.com --password yourpassword
 ## Stack
 
 - Python 3.10+
-- `requests` — API calls
+- `requests` — password API calls
 - `typer` — CLI interface
-- `python-dotenv` — API key management
+- `xposedornot` — free email breach checking API
+
+---
 
 ## Why I built this
 
-An extension of the security thinking behind [Cloud Sentinel](https://github.com/kithmini-hub/CloudSentinel) — runtime threat detection at the cloud level. This applies the same idea at a personal scale: surface exposure you didn't know you had.
+An extension of the security thinking behind [Cloud Sentinel](https://github.com/kithmini-hub/CloudSentinel) - runtime threat detection at the cloud level. This applies the same idea at a personal scale: surface exposure you didn't know you had.
