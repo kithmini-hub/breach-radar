@@ -1,3 +1,5 @@
 requests
 typer
 xposedornot
+fastapi
+uvicorn
