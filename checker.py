@@ -1,44 +1,33 @@
 import hashlib
 import requests
-import os
-from dotenv import load_dotenv
+from xposedornot import XposedOrNot
 
-# loads the .env file so we can grab the api key
-load_dotenv()
-
-HIBP_API_KEY = os.getenv("HIBP_API_KEY")
-
-# hibp requires these headers with every request or it rejects us
-HIBP_HEADERS = {
-    "hibp-api-key": HIBP_API_KEY,
-    "user-agent": "breach-radar-cli"
-}
+# xposedornot client - no api key needed, its completely free
+xon = XposedOrNot()
 
 def check_email(email: str) -> list:
-    # hits the hibp api and checks if this email showed up in any breaches
-    # returns a list of breach objects, empty list if clean, None if something went wrong
-    url = f"https://haveibeenpwned.com/api/v3/breachedaccount/{email}?truncateResponse=false"
-    
+    # checks if the email appeared in any known breaches
+    # using xposedornot which is free and doesnt need an api key
     try:
-        response = requests.get(url, headers=HIBP_HEADERS)
+        result = xon.check_email(email)
         
-        if response.status_code == 200:
-            return response.json()  # found breaches, return them
-        elif response.status_code == 404:
-            return []  # 404 here actually means no breaches found, not an error
-        elif response.status_code == 401:
-            print("Error: Invalid or missing API key. Check your .env file.")
-            return None
-        elif response.status_code == 429:
-            # hibp rate limits if u hit it too many times, just wait a bit
-            print("Error: Rate limited. Please wait a moment and try again.")
-            return None
-        else:
-            print(f"Unexpected error: {response.status_code}")
-            return None
-            
-    except requests.exceptions.ConnectionError:
-        print("Error: Could not connect. Check your internet connection.")
+        if not result.breaches:
+            return []  # clean, no breaches found
+        
+        # format it to match what the rest of our code expects
+        # each breach becomes a dict with a Name field
+        formatted = []
+        for breach_name in result.breaches:
+            formatted.append({
+                "Name": breach_name,
+                "BreachDate": "unknown",  # free api doesnt return dates
+                "DataClasses": []  # free api doesnt return data types either
+            })
+        
+        return formatted
+
+    except Exception as e:
+        print(f"Error checking email: {e}")
         return None
 
 
